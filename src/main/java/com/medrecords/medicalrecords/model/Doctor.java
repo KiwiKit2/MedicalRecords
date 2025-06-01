@@ -1,6 +1,8 @@
 package com.medrecords.medicalrecords.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity
@@ -13,8 +15,11 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name is mandatory")
+    @Size(max = 100, message = "Name cannot exceed 100 characters")
     private String name;
 
+    @Size(max = 255, message = "Specialties cannot exceed 255 characters")
     private String specialties;
 
     private String specialization;

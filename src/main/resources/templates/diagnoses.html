@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Diagnoses</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Manage Diagnoses</h1>
+
+    <!-- Add Diagnosis Form -->
+    <form th:action="@{/diagnoses}" method="post" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="name" placeholder="Diagnosis Name" required>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="description" placeholder="Description" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Add Diagnosis</button>
+    </form>
+
+    <!-- Diagnoses Table -->
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="diagnosis : ${diagnoses}">
+            <td th:text="${diagnosis.id}"></td>
+            <td th:text="${diagnosis.name}"></td>
+            <td th:text="${diagnosis.description}"></td>
+            <td>
+                <a th:href="@{/diagnoses/edit/{id}(id=${diagnosis.id})}" class="btn btn-warning btn-sm">Edit</a>
+                <a th:href="@{/diagnoses/delete/{id}(id=${diagnosis.id})}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+</body>
+</html>

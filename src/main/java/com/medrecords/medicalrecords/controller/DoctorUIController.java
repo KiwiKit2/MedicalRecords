@@ -2,7 +2,6 @@ package com.medrecords.medicalrecords.controller;
 
 import com.medrecords.medicalrecords.model.Doctor;
 import com.medrecords.medicalrecords.repository.DoctorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/doctors")
 public class DoctorUIController {
 
-    @Autowired
-    private DoctorRepository doctorRepository;
+    private final DoctorRepository doctorRepository;
+
+    public DoctorUIController(DoctorRepository doctorRepository) {
+        this.doctorRepository = doctorRepository;
+    }
 
     @GetMapping
     public String listDoctors(Model model) {

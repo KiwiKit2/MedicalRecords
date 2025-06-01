@@ -1,16 +1,12 @@
 package com.medrecords.medicalrecords.service;
 
-import com.medrecords.medicalrecords.model.Diagnosis;
-import com.medrecords.medicalrecords.model.Doctor;
-import com.medrecords.medicalrecords.model.Patient;
-import com.medrecords.medicalrecords.model.Visit;
-import com.medrecords.medicalrecords.repository.DiagnosisRepository;
-import com.medrecords.medicalrecords.repository.DoctorRepository;
 import com.medrecords.medicalrecords.repository.PatientRepository;
 import com.medrecords.medicalrecords.repository.VisitRepository;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,30 +15,38 @@ public class ReportService {
 
     private final VisitRepository visitRepository;
     private final PatientRepository patientRepository;
-    private final DoctorRepository doctorRepository;
-    private final DiagnosisRepository diagnosisRepository;
 
-    public ReportService(VisitRepository visitRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, DiagnosisRepository diagnosisRepository) {
+    public ReportService(VisitRepository visitRepository, PatientRepository patientRepository) {
         this.visitRepository = visitRepository;
         this.patientRepository = patientRepository;
-        this.doctorRepository = doctorRepository;
-        this.diagnosisRepository = diagnosisRepository;
     }
 
     public Map<String, Long> getDiagnosisCounts() {
-        return visitRepository.findAll().stream()
-                .filter(visit -> visit.getDiagnosis() != null)
-                .collect(Collectors.groupingBy(visit -> visit.getDiagnosis().getName(), Collectors.counting()));
+        try {
+            return visitRepository.findAll().stream()
+                    .filter(visit -> visit.getDiagnosis() != null)
+                    .collect(Collectors.groupingBy(visit -> visit.getDiagnosis().getName(), Collectors.counting()));
+        } catch (DataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching diagnosis counts", e);
+        }
     }
 
     public Map<String, Long> getPatientsPerDoctor() {
-        return patientRepository.findAll().stream()
-                .filter(patient -> patient.getPrimaryDoctor() != null)
-                .collect(Collectors.groupingBy(patient -> patient.getPrimaryDoctor().getName(), Collectors.counting()));
+        try {
+            return patientRepository.findAll().stream()
+                    .filter(patient -> patient.getPrimaryDoctor() != null)
+                    .collect(Collectors.groupingBy(patient -> patient.getPrimaryDoctor().getName(), Collectors.counting()));
+        } catch (DataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching patients per doctor", e);
+        }
     }
 
     public Map<String, Long> getVisitsPerDoctor() {
-        return visitRepository.findAll().stream()
-                .collect(Collectors.groupingBy(visit -> visit.getDoctor().getName(), Collectors.counting()));
+        try {
+            return visitRepository.findAll().stream()
+                    .collect(Collectors.groupingBy(visit -> visit.getDoctor().getName(), Collectors.counting()));
+        } catch (DataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching visits per doctor", e);
+        }
     }
 }

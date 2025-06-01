@@ -1,6 +1,8 @@
 package com.medrecords.medicalrecords.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.time.LocalDate;
 
@@ -14,8 +16,12 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name is mandatory")
+    @Size(max = 100, message = "Name cannot exceed 100 characters")
     private String name;
 
+    @NotBlank(message = "EGN is mandatory")
+    @Size(min = 10, max = 10, message = "EGN must be exactly 10 characters")
     @Column(unique = true)
     private String egn;
 
