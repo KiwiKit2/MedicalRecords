@@ -10,4 +10,9 @@ public class UIController {
     public String dashboard() {
         return "dashboard";
     }
+
+    @GetMapping("/dashboard")
+    public String dashboardPage() {
+        return "dashboard";
+    }
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Patients by Diagnosis</nksomething><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Patients by Diagnosis</h1>
+    <form th:action="@{/reports/patients-by-diagnosis}" method="post" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <select class="form-control" name="diagnosisId" required>
+                    <option value="" disabled selected>Select Diagnosis</option>
+                    <option th:each="diag: ${diagnoses}" th:value="${diag.id}" th:text="${diag.name}"></option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-primary">Show Patients</button>
+            </div>
+        </div>
+    </form>
+
+    <div th:if="${patients}">
+        <h2 th:if="${selectedDiagnosis}">Diagnosis: <span th:text="${selectedDiagnosis.name}"></span></h2>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>EGN</th>
+                <th>Primary Doctor</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="patient: ${patients}">
+                <td th:text="${patient.id}"></td>
+                <td th:text="${patient.name}"></td>
+                <td th:text="${patient.egn}"></td>
+                <td th:text="${patient.primaryDoctor.name}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+</body>
+</html>

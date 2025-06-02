@@ -4,11 +4,14 @@ import com.medrecords.medicalrecords.model.*;
 import com.medrecords.medicalrecords.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/visits")
@@ -27,8 +30,18 @@ public class VisitUIController {
     private DiagnosisRepository diagnosisRepository;
 
     @GetMapping
-    public String listVisits(Model model) {
-        model.addAttribute("visits", visitRepository.findAll());
+    public String listVisits(Model model, Authentication authentication) {
+        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PATIENT"))) {
+            // Show only the authenticated patient's visits
+            var patients = patientRepository.findByEgn(authentication.getName());
+            if (!patients.isEmpty()) {
+                model.addAttribute("visits", visitRepository.findByPatientId(patients.get(0).getId()));
+            } else {
+                model.addAttribute("visits", List.of());
+            }
+        } else {
+            model.addAttribute("visits", visitRepository.findAll());
+        }
         model.addAttribute("patients", patientRepository.findAll());
         model.addAttribute("doctors", doctorRepository.findAll());
         model.addAttribute("diagnoses", diagnosisRepository.findAll());
@@ -73,7 +86,7 @@ public class VisitUIController {
         return "edit_visit";
     }
 
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('DOCTOR') and #visit.patient.primaryDoctor.username == authentication.name)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/edit/{id}")
     public String updateVisit(@PathVariable Long id, @RequestParam Long patientId, @RequestParam Long doctorId,
                                @RequestParam String visitDate, @RequestParam Long diagnosisId,

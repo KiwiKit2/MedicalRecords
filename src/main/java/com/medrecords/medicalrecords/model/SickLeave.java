@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "SICKLEAVE")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,4 +33,18 @@ public class SickLeave {
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
+
+    public void setDurationInDays(int durationInDays) {
+        this.durationInDays = durationInDays;
+        if (this.startDate != null) {
+            this.endDate = this.startDate.plusDays(durationInDays);
+        }
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+        if (this.durationInDays > 0) {
+            this.endDate = startDate.plusDays(this.durationInDays);
+        }
+    }
 }
