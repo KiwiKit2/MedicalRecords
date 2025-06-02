@@ -9,13 +9,15 @@
     <h1>Manage Doctors</h1>
 
     <!-- Add Doctor Form -->
-    <form th:action="@{/doctors}" method="post" class="mb-4">
+    <form th:action="@{/doctors}" th:object="${doctor}" method="post" class="mb-4">
         <div class="row">
             <div class="col-md-6">
-                <input type="text" class="form-control" name="name" placeholder="Doctor Name" required>
+                <input type="text" th:field="*{name}" class="form-control" placeholder="Doctor Name" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
             <div class="col-md-6">
-                <input type="text" class="form-control" name="specialization" placeholder="Specialization" required>
+                <input type="text" th:field="*{specialization}" class="form-control" placeholder="Specialization" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('specialization')}" th:errors="*{specialization}"></div>
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3">Add Doctor</button>

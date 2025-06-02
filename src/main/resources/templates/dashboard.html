@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,50 +10,64 @@
     <div class="container mt-5">
         <h1 class="text-center mb-4">Medical Records Management</h1>
         <div class="row">
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/doctors}" class="btn btn-primary w-100">Manage Doctors</a>
+            <!-- Admin/Doctor management links -->
+            <div sec:authorize="hasAnyRole('ADMIN','DOCTOR')">
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/doctors}" class="btn btn-primary w-100">Manage Doctors</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/patients}" class="btn btn-primary w-100">Manage Patients</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/diagnoses}" class="btn btn-primary w-100">Manage Diagnoses</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/visits}" class="btn btn-primary w-100">Manage Visits</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/sick-leaves}" class="btn btn-primary w-100">Manage Sick Leaves</a>
+                </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/patients}" class="btn btn-primary w-100">Manage Patients</a>
+            <!-- Patient visits -->
+            <div sec:authorize="hasRole('PATIENT')">
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/my-visits}" class="btn btn-primary w-100">My Visits</a>
+                </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/diagnoses}" class="btn btn-primary w-100">Manage Diagnoses</a>
+            <!-- Report pages for admin and doctor -->
+            <div sec:authorize="hasAnyRole('ADMIN','DOCTOR')">
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/reports/patients-by-diagnosis}" class="btn btn-secondary w-100">Patients by Diagnosis</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/reports/visits-by-patient}" class="btn btn-secondary w-100">Visits by Patient</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/reports/visits-in-period}" class="btn btn-secondary w-100">Visits in Period</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/reports/visits-by-doctor}" class="btn btn-secondary w-100">Visits by Doctor</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/reports/month-most-sick-leaves}" class="btn btn-secondary w-100">Month with Most Sick Leaves</a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a th:href="@{/reports/doctors-most-sick-leaves}" class="btn btn-secondary w-100">Doctors with Most Sick Leaves</a>
+                </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/visits}" class="btn btn-primary w-100">Manage Visits</a>
+        </div>
+    </div>
+    <!-- Login/Logout Buttons -->
+    <div class="container">
+        <div class="d-flex justify-content-end mt-2">
+            <div sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="btn btn-outline-primary me-2">Login</a>
             </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/my-visits}" class="btn btn-primary w-100">My Visits</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/sick-leaves}" class="btn btn-primary w-100">Manage Sick Leaves</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/api/reports/diagnosis-counts}" class="btn btn-secondary w-100">Diagnosis Statistics</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/api/reports/patients-per-doctor}" class="btn btn-secondary w-100">Patients Per Doctor</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/api/reports/visits-per-doctor}" class="btn btn-secondary w-100">Visits Per Doctor</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/reports/patients-by-diagnosis}" class="btn btn-secondary w-100">Patients by Diagnosis</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/reports/visits-by-patient}" class="btn btn-secondary w-100">Visits by Patient</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/reports/visits-in-period}" class="btn btn-secondary w-100">Visits in Period</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/reports/visits-by-doctor}" class="btn btn-secondary w-100">Visits by Doctor</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/reports/month-most-sick-leaves}" class="btn btn-secondary w-100">Month with Most Sick Leaves</a>
-            </div>
-            <div class="col-md-4 mb-3">
-                <a th:href="@{/reports/doctors-most-sick-leaves}" class="btn btn-secondary w-100">Doctors with Most Sick Leaves</a>
+            <div sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <sec:csrfInput />
+                    <button type="submit" class="btn btn-outline-danger">Logout</button>
+                </form>
             </div>
         </div>
     </div>

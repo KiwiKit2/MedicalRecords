@@ -39,10 +39,10 @@
             <tbody>
             <tr th:each="visit : ${visits}">
                 <td th:text="${visit.id}"></td>
-                <td th:text="${visit.patient.name}"></td>
-                <td th:text="${visit.doctor.name}"></td>
+                <td th:text="${visit.patient?.name}"></td>
+                <td th:text="${visit.doctor?.name}"></td>
                 <td th:text="${visit.visitDate}"></td>
-                <td th:text="${visit.diagnosis.name}"></td>
+                <td th:text="${visit.diagnosis?.name}"></td>
                 <td th:text="${visit.treatment}"></td>
             </tr>
             </tbody>

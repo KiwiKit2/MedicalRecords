@@ -4,10 +4,12 @@ import com.medrecords.medicalrecords.model.Doctor;
 import com.medrecords.medicalrecords.model.Patient;
 import com.medrecords.medicalrecords.repository.DoctorRepository;
 import com.medrecords.medicalrecords.repository.PatientRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -24,20 +26,19 @@ public class PatientUIController {
     public String listPatients(Model model) {
         model.addAttribute("patients", patientRepository.findAll());
         model.addAttribute("doctors", doctorRepository.findAll());
+        model.addAttribute("patient", new Patient());
         return "patients";
     }
 
     @PostMapping
-    public String addPatient(@RequestParam String name, @RequestParam String egn,
-                              @RequestParam Long primaryDoctorId,
-                              @RequestParam(required = false) boolean paidInsuranceLast6Months) {
-        Doctor primaryDoctor = doctorRepository.findById(primaryDoctorId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid doctor Id:" + primaryDoctorId));
-        Patient patient = new Patient();
-        patient.setName(name);
-        patient.setEgn(egn);
-        patient.setPrimaryDoctor(primaryDoctor);
-        patient.setPaidInsuranceLast6Months(paidInsuranceLast6Months);
+    public String addPatient(@Valid @ModelAttribute("patient") Patient patient,
+                             BindingResult bindingResult,
+                             Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("patients", patientRepository.findAll());
+            model.addAttribute("doctors", doctorRepository.findAll());
+            return "patients";
+        }
         patientRepository.save(patient);
         return "redirect:/patients";
     }
@@ -60,17 +61,15 @@ public class PatientUIController {
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('DOCTOR') and #id == authentication.name)")
-    public String updatePatient(@PathVariable Long id, @RequestParam String name, @RequestParam String egn,
-                                 @RequestParam Long primaryDoctorId,
-                                 @RequestParam(required = false) boolean paidInsuranceLast6Months) {
-        Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid patient Id:" + id));
-        Doctor primaryDoctor = doctorRepository.findById(primaryDoctorId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid doctor Id:" + primaryDoctorId));
-        patient.setName(name);
-        patient.setEgn(egn);
-        patient.setPrimaryDoctor(primaryDoctor);
-        patient.setPaidInsuranceLast6Months(paidInsuranceLast6Months);
+    public String updatePatient(@PathVariable Long id,
+                                @Valid @ModelAttribute("patient") Patient patient,
+                                BindingResult bindingResult,
+                                Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("doctors", doctorRepository.findAll());
+            return "edit_patient";
+        }
+        patient.setId(id);
         patientRepository.save(patient);
         return "redirect:/patients";
     }

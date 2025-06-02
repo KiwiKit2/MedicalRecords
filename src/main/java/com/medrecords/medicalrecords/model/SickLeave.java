@@ -1,6 +1,7 @@
 package com.medrecords.medicalrecords.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.LocalDate;
@@ -24,10 +25,12 @@ public class SickLeave {
     @NotNull(message = "Start date is mandatory")
     private LocalDate startDate;
 
-    @NotNull(message = "End date is mandatory")
+    // endDate is computed
     private LocalDate endDate;
 
-    private int durationInDays;
+    @NotNull(message = "Duration is mandatory")
+    @Min(value = 1, message = "Duration must be at least 1 day")
+    private Integer durationInDays;
 
     @NotNull(message = "Doctor is mandatory")
     @ManyToOne

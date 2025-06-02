@@ -2,9 +2,11 @@ package com.medrecords.medicalrecords.controller;
 
 import com.medrecords.medicalrecords.model.Diagnosis;
 import com.medrecords.medicalrecords.repository.DiagnosisRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -17,14 +19,18 @@ public class DiagnosisUIController {
     @GetMapping
     public String listDiagnoses(Model model) {
         model.addAttribute("diagnoses", diagnosisRepository.findAll());
+        model.addAttribute("diagnosis", new Diagnosis());
         return "diagnoses";
     }
 
     @PostMapping
-    public String addDiagnosis(@RequestParam String name, @RequestParam String description) {
-        Diagnosis diagnosis = new Diagnosis();
-        diagnosis.setName(name);
-        diagnosis.setDescription(description);
+    public String addDiagnosis(@Valid @ModelAttribute("diagnosis") Diagnosis diagnosis,
+                               BindingResult bindingResult,
+                               Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("diagnoses", diagnosisRepository.findAll());
+            return "diagnoses";
+        }
         diagnosisRepository.save(diagnosis);
         return "redirect:/diagnoses";
     }
@@ -44,11 +50,14 @@ public class DiagnosisUIController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateDiagnosis(@PathVariable Long id, @RequestParam String name, @RequestParam String description) {
-        Diagnosis diagnosis = diagnosisRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid diagnosis Id:" + id));
-        diagnosis.setName(name);
-        diagnosis.setDescription(description);
+    public String updateDiagnosis(@PathVariable Long id,
+                                  @Valid @ModelAttribute("diagnosis") Diagnosis diagnosis,
+                                  BindingResult bindingResult,
+                                  Model model) {
+        if (bindingResult.hasErrors()) {
+            return "edit_diagnosis";
+        }
+        diagnosis.setId(id);
         diagnosisRepository.save(diagnosis);
         return "redirect:/diagnoses";
     }

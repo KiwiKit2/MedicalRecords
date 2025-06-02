@@ -33,7 +33,7 @@
             </div>
             <div class="col-md-6">
                 <label for="endDate" class="form-label">End Date</label>
-                <input type="text" id="endDate" class="form-control" th:value="${#dates.format(sickLeave.endDate, 'yyyy-MM-dd')}" readonly>
+                <input type="text" id="endDate" class="form-control" th:value="${sickLeave.endDate != null ? #dates.format(sickLeave.endDate,'yyyy-MM-dd') : ''}" readonly>
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3">Add Sick Leave</button>

@@ -9,13 +9,15 @@
     <h1>Manage Diagnoses</h1>
 
     <!-- Add Diagnosis Form -->
-    <form th:action="@{/diagnoses}" method="post" class="mb-4">
+    <form th:action="@{/diagnoses}" th:object="${diagnosis}" method="post" class="mb-4">
         <div class="row">
             <div class="col-md-6">
-                <input type="text" class="form-control" name="name" placeholder="Diagnosis Name" required>
+                <input type="text" class="form-control" th:field="*{name}" placeholder="Diagnosis Name" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
             <div class="col-md-6">
-                <input type="text" class="form-control" name="description" placeholder="Description" required>
+                <input type="text" class="form-control" th:field="*{description}" placeholder="Description" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3">Add Diagnosis</button>

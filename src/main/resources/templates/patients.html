@@ -9,23 +9,26 @@
     <h1>Manage Patients</h1>
 
     <!-- Add Patient Form -->
-    <form th:action="@{/patients}" method="post" class="mb-4">
+    <form th:action="@{/patients}" th:object="${patient}" method="post" class="mb-4">
         <div class="row">
             <div class="col-md-4">
-                <input type="text" class="form-control" name="name" placeholder="Patient Name" required>
+                <input type="text" class="form-control" th:field="*{name}" placeholder="Patient Name" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
             <div class="col-md-4">
-                <input type="text" class="form-control" name="egn" placeholder="EGN" required>
+                <input type="text" class="form-control" th:field="*{egn}" placeholder="EGN" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('egn')}" th:errors="*{egn}"></div>
             </div>
             <div class="col-md-4">
-                <select class="form-control" name="primaryDoctorId" required>
+                <select class="form-control" th:field="*{primaryDoctor.id}" required>
                     <option value="" disabled selected>Select Primary Doctor</option>
                     <option th:each="doctor : ${doctors}" th:value="${doctor.id}" th:text="${doctor.name}"></option>
                 </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('primaryDoctor')}" th:errors="*{primaryDoctor}"></div>
             </div>
         </div>
         <div class="form-check mt-3">
-            <input class="form-check-input" type="checkbox" name="paidInsuranceLast6Months" id="paidInsurance">
+            <input class="form-check-input" type="checkbox" th:field="*{paidInsuranceLast6Months}" id="paidInsurance">
             <label class="form-check-label" for="paidInsurance">
                 Paid Insurance in Last 6 Months
             </label>

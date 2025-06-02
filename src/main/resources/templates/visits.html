@@ -9,33 +9,38 @@
     <h1>Manage Visits</h1>
 
     <!-- Add Visit Form -->
-    <form th:action="@{/visits}" method="post" class="mb-4">
+    <form th:action="@{/visits}" th:object="${visit}" method="post" class="mb-4">
         <div class="row">
             <div class="col-md-4">
-                <select class="form-control" name="patientId" required>
+                <select class="form-control" th:field="*{patient.id}" required>
                     <option value="" disabled selected>Select Patient</option>
                     <option th:each="patient : ${patients}" th:value="${patient.id}" th:text="${patient.name}"></option>
                 </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('patient')}" th:errors="*{patient}"></div>
             </div>
             <div class="col-md-4">
-                <select class="form-control" name="doctorId" required>
+                <select class="form-control" th:field="*{doctor.id}" required>
                     <option value="" disabled selected>Select Doctor</option>
                     <option th:each="doctor : ${doctors}" th:value="${doctor.id}" th:text="${doctor.name}"></option>
                 </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('doctor')}" th:errors="*{doctor}"></div>
             </div>
             <div class="col-md-4">
-                <input type="date" class="form-control" name="visitDate" required>
+                <input type="date" class="form-control" th:field="*{visitDate}" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('visitDate')}" th:errors="*{visitDate}"></div>
             </div>
         </div>
         <div class="row mt-3">
             <div class="col-md-6">
-                <select class="form-control" name="diagnosisId" required>
+                <select class="form-control" th:field="*{diagnosis.id}" required>
                     <option value="" disabled selected>Select Diagnosis</option>
                     <option th:each="diagnosis : ${diagnoses}" th:value="${diagnosis.id}" th:text="${diagnosis.name}"></option>
                 </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('diagnosis')}" th:errors="*{diagnosis}"></div>
             </div>
             <div class="col-md-6">
-                <input type="text" class="form-control" name="treatment" placeholder="Treatment">
+                <input type="text" class="form-control" th:field="*{treatment}" placeholder="Treatment">
+                <div class="text-danger" th:if="${#fields.hasErrors('treatment')}" th:errors="*{treatment}"></div>
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3">Add Visit</button>

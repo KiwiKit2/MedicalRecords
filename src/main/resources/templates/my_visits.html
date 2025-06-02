@@ -22,12 +22,12 @@
             <tr th:each="visit : ${visits}">
                 <td th:text="${visit.id}"></td>
                 <td th:text="${visit.visitDate}"></td>
-                <td th:text="${visit.doctor.name}"></td>
-                <td th:text="${visit.diagnosis.name}"></td>
+                <td th:text="${visit.doctor != null ? visit.doctor.name : ''}"></td>
+                <td th:text="${visit.diagnosis != null ? visit.diagnosis.name : ''}"></td>
                 <td th:text="${visit.treatment}"></td>
                 <td>
-                    <a th:href="@{'/visits/edit/' + ${visit.id}}" class="btn btn-warning btn-sm" th:if="${#authorization.expression('hasRole(''ADMIN'') or hasRole(''DOCTOR'')')}">Edit</a>
-                    <a th:href="@{'/visits/delete/' + ${visit.id}}" class="btn btn-danger btn-sm" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Delete</a>
+                    <a th:href="@{/visits/edit/{id}(id=${visit.id})}" class="btn btn-warning btn-sm">Edit</a>
+                    <a th:href="@{/visits/delete/{id}(id=${visit.id})}" class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
         </tbody>

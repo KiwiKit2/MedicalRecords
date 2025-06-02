@@ -2,9 +2,11 @@ package com.medrecords.medicalrecords.controller;
 
 import com.medrecords.medicalrecords.model.*;
 import com.medrecords.medicalrecords.repository.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -27,22 +29,27 @@ public class SickLeaveUIController {
         model.addAttribute("sickLeaves", sickLeaveRepository.findAll());
         model.addAttribute("patients", patientRepository.findAll());
         model.addAttribute("doctors", doctorRepository.findAll());
+        model.addAttribute("sickLeave", new com.medrecords.medicalrecords.model.SickLeave());
         return "sick_leaves";
     }
 
     @PostMapping
-    public String addSickLeave(@RequestParam Long patientId, @RequestParam Long doctorId,
-                                @RequestParam String startDate, @RequestParam int durationInDays) {
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid patient Id:" + patientId));
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid doctor Id:" + doctorId));
-
-        SickLeave sickLeave = new SickLeave();
+    public String addSickLeave(@Valid @ModelAttribute("sickLeave") SickLeave sickLeave,
+                               BindingResult bindingResult,
+                               Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("sickLeaves", sickLeaveRepository.findAll());
+            model.addAttribute("patients", patientRepository.findAll());
+            model.addAttribute("doctors", doctorRepository.findAll());
+            return "sick_leaves";
+        }
+        // ensure associations
+        Patient patient = patientRepository.findById(sickLeave.getPatient().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid patient Id:" + sickLeave.getPatient().getId()));
+        Doctor doctor = doctorRepository.findById(sickLeave.getDoctor().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid doctor Id:" + sickLeave.getDoctor().getId()));
         sickLeave.setPatient(patient);
         sickLeave.setDoctor(doctor);
-        sickLeave.setStartDate(LocalDate.parse(startDate));
-        sickLeave.setDurationInDays(durationInDays);
         sickLeaveRepository.save(sickLeave);
         return "redirect:/sick-leaves";
     }
@@ -64,20 +71,26 @@ public class SickLeaveUIController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateSickLeave(@PathVariable Long id, @RequestParam Long patientId, @RequestParam Long doctorId,
-                                   @RequestParam String startDate, @RequestParam int durationInDays) {
-        SickLeave sickLeave = sickLeaveRepository.findById(id)
+    public String updateSickLeave(@PathVariable Long id,
+                                   @Valid @ModelAttribute("sickLeave") SickLeave sickLeave,
+                                   BindingResult bindingResult,
+                                   Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("patients", patientRepository.findAll());
+            model.addAttribute("doctors", doctorRepository.findAll());
+            return "edit_sick_leave";
+        }
+        SickLeave existing = sickLeaveRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid sick leave Id:" + id));
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid patient Id:" + patientId));
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid doctor Id:" + doctorId));
-
-        sickLeave.setPatient(patient);
-        sickLeave.setDoctor(doctor);
-        sickLeave.setStartDate(LocalDate.parse(startDate));
-        sickLeave.setDurationInDays(durationInDays);
-        sickLeaveRepository.save(sickLeave);
+        Patient patient = patientRepository.findById(sickLeave.getPatient().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid patient Id:" + sickLeave.getPatient().getId()));
+        Doctor doctor = doctorRepository.findById(sickLeave.getDoctor().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid doctor Id:" + sickLeave.getDoctor().getId()));
+        existing.setPatient(patient);
+        existing.setDoctor(doctor);
+        existing.setStartDate(sickLeave.getStartDate());
+        existing.setDurationInDays(sickLeave.getDurationInDays());
+        sickLeaveRepository.save(existing);
         return "redirect:/sick-leaves";
     }
 }
