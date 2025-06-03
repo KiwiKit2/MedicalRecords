@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,5 +126,37 @@ public class ReportUIController {
         List<Doctor> doctors = reportService.getDoctorsWithMostSickLeaves();
         model.addAttribute("doctors", doctors);
         return "doctors_most_sick_leaves";
+    }
+
+    // 3.b most frequent diagnoses
+    @GetMapping("/most-frequent-diagnoses")
+    public String mostFrequentDiagnoses(Model model) {
+        Map<String, Long> diagnosisCounts = reportService.getDiagnosisCounts();
+        model.addAttribute("diagnosisCounts", diagnosisCounts);
+        return "most_frequent_diagnoses";
+    }
+
+    // 3.c patients grouped by assigned doctor
+    @GetMapping("/patients-grouped-by-doctor")
+    public String patientsGroupedByDoctor(Model model) {
+        Map<Doctor, List<Patient>> grouped = reportService.getPatientsGroupedByDoctor();
+        model.addAttribute("patientsGroupedByDoctor", grouped);
+        return "patients_grouped_by_doctor";
+    }
+
+    // 3.d count of patients per doctor
+    @GetMapping("/patients-per-doctor")
+    public String patientsPerDoctor(Model model) {
+        Map<String, Long> counts = reportService.getPatientsPerDoctor();
+        model.addAttribute("patientsPerDoctor", counts);
+        return "patients_per_doctor";
+    }
+
+    // 3.e count of visits per doctor
+    @GetMapping("/visits-per-doctor")
+    public String visitsPerDoctor(Model model) {
+        Map<String, Long> counts = reportService.getVisitsPerDoctor();
+        model.addAttribute("visitsPerDoctor", counts);
+        return "visits_per_doctor";
     }
 }

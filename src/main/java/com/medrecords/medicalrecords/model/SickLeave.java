@@ -46,7 +46,7 @@ public class SickLeave {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
-        if (this.durationInDays > 0) {
+        if (this.durationInDays != null && this.durationInDays > 0) {
             this.endDate = startDate.plusDays(this.durationInDays);
         }
     }

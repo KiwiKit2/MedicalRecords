@@ -29,7 +29,11 @@ public class SickLeaveUIController {
         model.addAttribute("sickLeaves", sickLeaveRepository.findAll());
         model.addAttribute("patients", patientRepository.findAll());
         model.addAttribute("doctors", doctorRepository.findAll());
-        model.addAttribute("sickLeave", new com.medrecords.medicalrecords.model.SickLeave());
+        // Prepare default SickLeave with nested objects
+        com.medrecords.medicalrecords.model.SickLeave defaultLeave = new com.medrecords.medicalrecords.model.SickLeave();
+        defaultLeave.setPatient(new com.medrecords.medicalrecords.model.Patient());
+        defaultLeave.setDoctor(new com.medrecords.medicalrecords.model.Doctor());
+        model.addAttribute("sickLeave", defaultLeave);
         return "sick_leaves";
     }
 

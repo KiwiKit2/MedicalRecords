@@ -1,6 +1,7 @@
 package com.medrecords.medicalrecords.service;
 
 import com.medrecords.medicalrecords.model.Doctor;
+import com.medrecords.medicalrecords.model.Patient;
 import com.medrecords.medicalrecords.model.SickLeave;
 import com.medrecords.medicalrecords.model.Visit;
 import com.medrecords.medicalrecords.repository.PatientRepository;
@@ -90,5 +91,15 @@ public class ReportService {
                 .map(Map.Entry::getKey)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    public Map<Doctor, List<Patient>> getPatientsGroupedByDoctor() {
+        try {
+            return patientRepository.findAll().stream()
+                    .filter(p -> p.getPrimaryDoctor() != null)
+                    .collect(Collectors.groupingBy(Patient::getPrimaryDoctor));
+        } catch (DataAccessException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching patients grouped by doctor", e);
+        }
     }
 }

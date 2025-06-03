@@ -157,4 +157,42 @@ class ReportUIControllerTest {
                 .andExpect(view().name("doctors_most_sick_leaves"))
                 .andExpect(model().attributeExists("doctors"));
     }
+
+    @Test
+    void mostFrequentDiagnoses_ShouldRenderView() throws Exception {
+        when(reportService.getDiagnosisCounts()).thenReturn(Map.of("Flu", 10L));
+        mockMvc.perform(get("/reports/most-frequent-diagnoses"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("most_frequent_diagnoses"))
+                .andExpect(model().attributeExists("diagnosisCounts"));
+    }
+
+    @Test
+    void patientsGroupedByDoctor_ShouldRenderView() throws Exception {
+        Doctor doc = new Doctor(1L, "Dr X", null, null);
+        Patient pat = new Patient(2L, "Alice", "1112223334", false, doc);
+        when(reportService.getPatientsGroupedByDoctor()).thenReturn(Map.of(doc, List.of(pat)));
+        mockMvc.perform(get("/reports/patients-grouped-by-doctor"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("patients_grouped_by_doctor"))
+                .andExpect(model().attributeExists("patientsGroupedByDoctor"));
+    }
+
+    @Test
+    void patientsPerDoctor_ShouldRenderView() throws Exception {
+        when(reportService.getPatientsPerDoctor()).thenReturn(Map.of("Dr X", 5L));
+        mockMvc.perform(get("/reports/patients-per-doctor"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("patients_per_doctor"))
+                .andExpect(model().attributeExists("patientsPerDoctor"));
+    }
+
+    @Test
+    void visitsPerDoctor_ShouldRenderView() throws Exception {
+        when(reportService.getVisitsPerDoctor()).thenReturn(Map.of("Dr Y", 7L));
+        mockMvc.perform(get("/reports/visits-per-doctor"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("visits_per_doctor"))
+                .andExpect(model().attributeExists("visitsPerDoctor"));
+    }
 }
