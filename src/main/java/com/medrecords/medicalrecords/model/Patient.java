@@ -31,6 +31,20 @@ public class Patient {
     @JoinColumn(name = "doctor_id")
     private Doctor primaryDoctor;
 
+    @NotBlank(message = "Password is mandatory")
+    private String password;
+
+    /**
+     * Legacy constructor for tests: id, name, egn, paidInsuranceLast6Months, primaryDoctor
+     */
+    public Patient(Long id, String name, String egn, boolean paidInsuranceLast6Months, Doctor primaryDoctor) {
+        this.id = id;
+        this.name = name;
+        this.egn = egn;
+        this.paidInsuranceLast6Months = paidInsuranceLast6Months;
+        this.primaryDoctor = primaryDoctor;
+    }
+
     public Doctor getPrimaryDoctor() {
         return primaryDoctor;
     }

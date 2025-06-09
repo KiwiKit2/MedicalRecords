@@ -26,7 +26,10 @@ public class PatientUIController {
     public String listPatients(Model model) {
         model.addAttribute("patients", patientRepository.findAll());
         model.addAttribute("doctors", doctorRepository.findAll());
-        model.addAttribute("patient", new Patient());
+        // prepare empty patient with a nested Doctor instance for form binding
+        Patient patient = new Patient();
+        patient.setPrimaryDoctor(new Doctor());
+        model.addAttribute("patient", patient);
         return "patients";
     }
 

@@ -4,9 +4,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.servlet.http.HttpServletRequest;
 
-/**
- * Adds the current request URI as a model attribute for Thymeleaf templates.
- */
+
+//current request URI as a model attribute for Thymeleaf
 @ControllerAdvice
 public class CurrentRequestUriAdvice {
 
