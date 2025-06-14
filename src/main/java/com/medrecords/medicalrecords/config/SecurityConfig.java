@@ -26,8 +26,8 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder, PatientRepository patientRepository) {
         // In-memory users for ADMIN and DOCTOR
         InMemoryUserDetailsManager inMemory = new InMemoryUserDetailsManager(
-            User.withUsername("admin").password(passwordEncoder.encode("admin")).roles("ADMIN").build(),
-            User.withUsername("doctor").password(passwordEncoder.encode("doctor")).roles("DOCTOR").build()
+            User.withUsername("admin").password(passwordEncoder.encode("admin123")).roles("ADMIN").build(),
+            User.withUsername("doctor").password(passwordEncoder.encode("doctor123")).roles("DOCTOR").build()
         );
         return username -> {
             // try in-memory users first
